@@ -1,0 +1,17 @@
+What is it?
+===========
+
+xfce4 panel plugin for show namedays. 
+Inspired by (GdH, J. Nekvasila) applet for Gnome2 and Unity
+
+
+Installation
+============
+./autogen.sh --prefix=/usr/
+make
+make install (as root)
+
+
+How to report bugs?
+===================
+Let's go to https://bugs.launchpad.net/xfce4-nameday-plugin and fill a Bug Report

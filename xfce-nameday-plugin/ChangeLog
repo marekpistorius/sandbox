@@ -1,0 +1,6 @@
+2016	Marek <Mank1@seznam.cz>
+
+	* === Released 0.1.0 ===
+	* Fix some cppcheck warning
+	* Fix leap year isue
+
