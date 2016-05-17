@@ -19,7 +19,7 @@
 
 GETTEXT_PACKAGE = xfce4-nameday-plugin
 PACKAGE = xfce4-nameday-plugin
-VERSION = 0.1.0bzr-rUNKNOWN
+VERSION = 0.1.0git
 
 SHELL = /bin/sh
 
@@ -36,7 +36,7 @@ libdir = ${exec_prefix}/lib
 DATADIRNAME = share
 itlocaledir = $(prefix)/$(DATADIRNAME)/locale
 subdir = po
-install_sh = ${SHELL} /home/mank/xfce4-nameday-plugin/install-sh
+install_sh = ${SHELL} /home/mank/Downloads/xfce-stuff/xfce-nameday-plugin/install-sh
 # Automake >= 1.8 provides $(MKDIR_P).
 # Until it can be supposed, use the safe fallback:
 mkdir_p = $(install_sh) -d

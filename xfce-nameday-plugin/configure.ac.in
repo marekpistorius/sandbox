@@ -2,7 +2,6 @@ dnl $Id$
 dnl
 dnl xfce4-nameday-plugin - A nameday plugin for the Xfce panel
 dnl
-dnl 2010-2014 Mank <Mank1@seznam.cz>
 dnl
 
 dnl ***************************
@@ -12,16 +11,16 @@ m4_define([nameday_version_major], [0])
 m4_define([nameday_version_minor], [1])
 m4_define([nameday_version_micro], [0])
 m4_define([nameday_version_build], [r@REVISION@])
-m4_define([nameday_version_tag], [bzr])
+m4_define([nameday_version_tag], [git])
 m4_define([nameday_version], [nameday_version_major().nameday_version_minor().nameday_version_micro()ifelse(nameday_version_tag(), [bzr], [nameday_version_tag()-nameday_version_build()], [nameday_version_tag()])])
 m4_pattern_allow([^AM_NLS$])
 
 dnl ***************************
 dnl *** Initialize autoconf ***
 dnl ***************************
-AC_COPYRIGHT([Copyright (c) 2010-2014
-        Mank <mank1@seznam.cz>])
-AC_INIT([xfce4-nameday-plugin], [nameday_version], [https://launchpad.net/xfce4-nameday-plugin], [xfce4-nameday-plugin])
+AC_COPYRIGHT([Copyright (c) 2016
+        Marek <marek.pistorius@gmail.com>])
+AC_INIT([xfce4-nameday-plugin], [nameday_version], [https://github.com/mpist/xfce-stuff], [xfce4-nameday-plugin])
 AC_PREREQ([2.50])
 AC_CANONICAL_TARGET()
 AC_REVISION([$Id])
