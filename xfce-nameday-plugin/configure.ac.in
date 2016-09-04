@@ -18,7 +18,7 @@ m4_pattern_allow([^AM_NLS$])
 dnl ***************************
 dnl *** Initialize autoconf ***
 dnl ***************************
-AC_COPYRIGHT([Copyright (c) 2016
+AC_COPYRIGHT([Copyright (c) 2016-2017
         Marek <marek.pistorius@gmail.com>])
 AC_INIT([xfce4-nameday-plugin], [nameday_version], [https://github.com/mpist/xfce-stuff], [xfce4-nameday-plugin])
 AC_PREREQ([2.50])
@@ -115,4 +115,5 @@ echo
 echo "Build Configuration:"
 echo
 echo "* Debug Support:    $enable_debug"
+echo "* Prefix Path:	$prefix"
 echo

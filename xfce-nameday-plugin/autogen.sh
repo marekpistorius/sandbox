@@ -2,7 +2,7 @@
 #
 # $Id$
 #
-# Copyright (c) 2002-2014
+# Copyright (c) 2002-2017
 #         The Xfce development team. All rights reserved.
 #
 
