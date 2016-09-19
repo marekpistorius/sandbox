@@ -1,7 +1,7 @@
 What is it?
 ===========
 
-xfce4 panel plugin for show namedays. 
+xfce4 panel plugin for show namedays.
 It is Inspired by (GdH, J. Nekvasila) applet for Gnome2 and Unity
 
 
@@ -14,8 +14,8 @@ make install (as root/with sudo)
 
 How to report bugs?
 ===================
-Just send e-mail me or create Isue here on github
+Just send e-mail me or create Issue here on github
 
 ===================
 E-Mail:
-marek.pistorius at gmail dot com
+marek dot pistorius at gmail dot com

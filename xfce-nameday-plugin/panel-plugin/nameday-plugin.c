@@ -1,6 +1,6 @@
 ﻿/*  $Id$
  *
- *  Copyright (c) 2010-2017
+ *  Copyright (c) 2017
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -44,12 +44,12 @@
 #endif
 
 /* prototypes */
-static gchar* getEaster(int rok);
-static gchar* getNamedayDay(gchar *_name,NamedaysPlugin *nmday);
+static gchar* getEaster(int year);
+static gchar* getNamedayDay(gchar *_name, NamedaysPlugin *nmday);
 static void onEasters(GtkWidget *widget, gpointer data);
 static void onSearchNmD(GtkWidget *widget, gpointer data);
 static void onCopy(GtkWidget *widget, gpointer data);
-static void showDialog(gchar *tmp);
+static int showDialog(gchar *tmp);
 static gboolean on_tooltip_cb (GtkWidget *widget, gint x, gint y, gboolean keyboard_mode, GtkTooltip *tooltip, NamedaysPlugin *data) ;
 static void onCalendar(GtkWidget *widget, gpointer data);
 
@@ -127,48 +127,48 @@ static void nameday_read (NamedaysPlugin *nmday)
   DBG ("Applying default settings");
 
   nmday->setting1 = g_strdup (DEFAULT_SETTING1);
-  nmday->setcount = DEFAULT_COUNT;	
+  nmday->setcount = DEFAULT_COUNT;
 }
 
 gchar *load_nm(GDate *date, NamedaysPlugin *nmday)
 {
 	char *namedays[365];
 	guint indexd;
-	
+
 	if(g_date_valid(date))
 	{
 		if(g_date_is_leap_year(date->year))
 		{
 			if(date->day == 29 && date->month == 2)
 			{
-			   GError* error = NULL;	
+			   GError* error = NULL;
 			   gchar *files = nmday->setting1;
 			   strcpy(files, ".leap");
 			   return NamedayInFebruaryLeapYear(files);
-			}	
-		}	
+			}
+		}
 		indexd = g_date_get_day_of_year(date);
 		if( (indexd > 0) && (indexd < 365) )
 		{
 			int res;
-			DBG("Load");	
-							
+			DBG("Load");
+
 			res = getNamedaysForFile(nmday->setting1, namedays);
 			if(res == 0)
 			{
-				DBG("Ok.");	
+				DBG("Ok.");
 				if(g_date_is_leap_year(date->year))
 					return g_strdup(namedays[(int)indexd-1]);
 				else
-					return g_strdup(namedays[(int)indexd]);	
+					return g_strdup(namedays[(int)indexd]);
 			}
 			else
-				return NULL;	
+				return NULL;
 		}
-		return NULL;	
+		return NULL;
 	}
 	else
-		return NULL;	
+		return NULL;
 }
 
 static gboolean update_nameday(NamedaysPlugin *data)
@@ -188,12 +188,12 @@ static gboolean update_nameday(NamedaysPlugin *data)
 	{
 		gtk_label_set_text(GTK_LABEL(data->label),tmp);
 		g_free(tmp);
-	}	
-	else gtk_label_set_text(GTK_LABEL(data->label),_("Dont go here"));	
+	}
+	else gtk_label_set_text(GTK_LABEL(data->label),_("Dont go here"));
 
 	g_date_clear(date, 1);
 	g_date_free(date);
-	
+
 	time (&t);
 	tinfo = localtime(&t);
 	h = tinfo->tm_hour;
@@ -205,7 +205,7 @@ static gboolean update_nameday(NamedaysPlugin *data)
 	if(h > 12 && h < 23)
 	{
 		data->updatetimeout = g_timeout_add_seconds((int)3600, (GSourceFunc) update_nameday, data);
-		return TRUE;	
+		return TRUE;
 	}
 	data->updatetimeout = g_timeout_add_seconds (UPDATE_TIME, (GSourceFunc) update_nameday, data);
 	return TRUE;
@@ -313,7 +313,7 @@ nameday_construct (XfcePanelPlugin *plugin)
 
   /* create the plugin */
   nmday = nameday_new (plugin);
-  
+
   #if !GTK_CHECK_VERSION(2,12,0)
 	nmday->tooltips = gtk_tooltips_new ();
 	g_object_ref (nmday->tooltips);
@@ -340,7 +340,7 @@ nameday_construct (XfcePanelPlugin *plugin)
   xfce_panel_plugin_menu_insert_item(plugin, GTK_MENU_ITEM(copyItem));
   g_signal_connect(copyItem, "activate", G_CALLBACK(onCopy), nmday);
   gtk_widget_show(copyItem);
-  
+
   calnItem	= gtk_menu_item_new_with_label(_("Calendar"));
   xfce_panel_plugin_menu_insert_item(plugin, GTK_MENU_ITEM(calnItem));
   g_signal_connect(calnItem, "activate", G_CALLBACK(onCalendar), nmday);
@@ -375,8 +375,8 @@ nameday_construct (XfcePanelPlugin *plugin)
   xfce_panel_plugin_menu_show_about (plugin);
   g_signal_connect (G_OBJECT (plugin), "about",
                     G_CALLBACK (nameday_about), NULL);
-                    
-   gtk_widget_show_all (GTK_WIDGET (plugin));                 
+
+   gtk_widget_show_all (GTK_WIDGET (plugin));
 }
 
 static void onEasters(GtkWidget *widget, gpointer data)
@@ -388,7 +388,7 @@ static void onEasters(GtkWidget *widget, gpointer data)
   GtkWidget *table;
   GtkWidget *local_entry1;
   GtkWidget *label;
-  gint response;
+  //gint response;
   GDate *date = g_date_new();
   g_date_set_time_t (date, time (NULL));
 
@@ -416,17 +416,18 @@ static void onEasters(GtkWidget *widget, gpointer data)
   gtk_box_pack_start (GTK_BOX (hbox), table, TRUE, TRUE, 0);
   label = gtk_label_new_with_mnemonic (_("_year ?"));
   gtk_table_attach_defaults (GTK_TABLE (table), label, 0, 1, 0, 1);
-  
+
   local_entry1 = gtk_spin_button_new_with_range(1883,2499,1);
   gtk_table_attach_defaults (GTK_TABLE (table), local_entry1, 1, 2, 0, 1);
 
   gtk_widget_show_all (hbox);
-  response = gtk_dialog_run (GTK_DIALOG (dialog));
+  gint response = gtk_dialog_run (GTK_DIALOG (dialog));
 
   if (response == GTK_RESPONSE_OK)
   {
+	gint res = 0;
 	gchar *tmp = getEaster(gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(local_entry1)));
-	showDialog(tmp);
+	res = showDialog(tmp);
 	g_free(tmp);
 	gtk_widget_destroy (dialog);
   }
@@ -436,21 +437,21 @@ static gboolean on_match_select(GtkEntryCompletion *widget,
   GtkTreeModel       *model,
   GtkTreeIter        *iter,
   gpointer            user_data)
-{  
-  GValue value = {0, };
+{
+  GValue value = G_VALUE_INIT;//req 2.30 or later glib
   gtk_tree_model_get_value(model, iter, TYPE_STR, &value);
   g_value_unset(&value);
   return FALSE;
-} 
+}
 
 static gint nmd_compare(GtkTreeModel *model, GtkTreeIter *a , GtkTreeIter *b, gpointer data)
 {
 	gchar *name1, *name2;
 	gint ret = 0;
-	
+
 	gtk_tree_model_get(model, a, TYPE_STR, &name1, -1);
     gtk_tree_model_get(model, b, TYPE_STR, &name2, -1);
-	
+
 	if (name1 == NULL || name2 == NULL)
     {
        if (name1 == NULL && name2 == NULL)
@@ -464,8 +465,8 @@ static gint nmd_compare(GtkTreeModel *model, GtkTreeIter *a , GtkTreeIter *b, gp
 
     g_free(name1);
     g_free(name2);
-	return ret;	
-}   
+	return ret;
+}
 
 static void onSearchNmD(GtkWidget *widget, gpointer data)
 {
@@ -478,10 +479,10 @@ static void onSearchNmD(GtkWidget *widget, gpointer data)
   GtkWidget *local_entry1;
   GtkWidget *label;
   gint response;
-  
+
   GtkEntryCompletion *completion;
   GtkListStore *model;
-  GtkTreeIter iter; 
+  GtkTreeIter iter;
   GList *list = NULL;
 
   GDate *date = g_date_new();
@@ -515,30 +516,30 @@ static void onSearchNmD(GtkWidget *widget, gpointer data)
 			     0, 1, 0, 1);
   local_entry1 =   gtk_entry_new ();
   /* set up completion */
-   completion = gtk_entry_completion_new();
+  completion = gtk_entry_completion_new();
   /* set completion on the TYPE_STR (0) */
   gtk_entry_completion_set_text_column(completion, TYPE_STR);
   gtk_entry_set_completion(GTK_ENTRY(local_entry1), completion);
   g_signal_connect(G_OBJECT (completion), "match-selected",
-                G_CALLBACK (on_match_select), NULL); 
+                G_CALLBACK (on_match_select), NULL);
    model = gtk_list_store_new(1, G_TYPE_STRING);
-   gtk_tree_sortable_set_sort_func(GTK_TREE_SORTABLE(model), TYPE_STR, (GtkTreeIterCompareFunc)nmd_compare,nmday,NULL); 
-  	
+   gtk_tree_sortable_set_sort_func(GTK_TREE_SORTABLE(model), TYPE_STR, (GtkTreeIterCompareFunc)nmd_compare,nmday,NULL);
+
 	gboolean isOk = getNamedaysForFileInGList(nmday->setting1,list);
 	if(isOk)
-	{ 
-		GList *stmp;		 
+	{
+		GList *stmp;
 		for(stmp = list;stmp;stmp = g_list_next(stmp))
-		{	
+		{
 			gtk_list_store_append(model, &iter);
-			gtk_list_store_set(model, &iter, TYPE_STR, (gchar *)stmp->data, -1); 
+			gtk_list_store_set(model, &iter, TYPE_STR, (gchar *)stmp->data, -1);
 		}
 	}
   gtk_entry_completion_set_model(completion, GTK_TREE_MODEL(model));
-                
-  
+
+
   gtk_table_attach_defaults (GTK_TABLE (table), local_entry1, 1, 2, 0, 1);
-  
+
   gtk_widget_show_all (hbox);
   response = gtk_dialog_run (GTK_DIALOG (dialog));
 
@@ -547,10 +548,11 @@ static void onSearchNmD(GtkWidget *widget, gpointer data)
 		gchar *tmp = getNamedayDay((gchar *)gtk_entry_get_text(GTK_ENTRY(local_entry1)),(NamedaysPlugin*)data);
 		if(tmp)
 		{
-			showDialog(tmp);
+			gint res = 0
+			res = showDialog(tmp);
 			g_free(tmp);
 			gtk_widget_destroy (dialog);
-		}	
+		}
   }
 }
 
@@ -561,28 +563,28 @@ void onCopy(GtkWidget *widget, gpointer data)
 	gchar * nmtext = _("Namedays have ");
 	gchar *_text = g_strconcat(nmtext,text,NULL);
 	gtk_clipboard_set_text(gtk_clipboard_get(GDK_SELECTION_CLIPBOARD), _text, strlen(_text));
-	
+
 }
 
 void onCalendar(GtkWidget *widget, gpointer data)
 {
-	NamedaysPlugin *nm = (NamedaysPlugin *)data;	
+	NamedaysPlugin *nm = (NamedaysPlugin *)data;
 	initDialogWithCalandar(nm->plugin, nm);
 }
 
-void showDialog(gchar * tmp)
+int showDialog(gchar * tmp)
 {
-	GtkWidget *dial;
-
-	dial = gtk_message_dialog_new(NULL,
+	int res = 0;
+	GtkWidget *dial = gtk_message_dialog_new(NULL,
 						GTK_DIALOG_MODAL,
 						GTK_MESSAGE_INFO,
 						GTK_BUTTONS_OK,
 						"%s",
 						tmp);
-							
-	gtk_dialog_run(GTK_DIALOG(dial));
+
+	res = gtk_dialog_run(GTK_DIALOG(dial));
 	gtk_widget_destroy (dial);
+	return res;
 
 }
 
@@ -593,38 +595,39 @@ static gboolean on_tooltip_cb (GtkWidget        *widget,
 					GtkTooltip       *tooltip,
 					NamedaysPlugin *nmday)
 {
-  gchar mar_text[1000];	
+  gchar mar_text[1000];
   GDate *date;
-  time_t times = time(NULL);	
-  gint set = 0;
+  time_t times = time(NULL);
   /* Actual Date and x after */
-  set = nmday->setcount;
+  gint set = nmday->setcount;
   date = g_date_new();
   g_date_set_time_t (date, times);
-  
+
   if(date == NULL)
   {
 		gtk_tooltip_set_text (tooltip, _("Cannot update date"));
   }
   else
   {
-	gchar *markup_text;  
+	gchar *markup_text;
 	strcpy(mar_text,"");
 	for(int i = 0;i < set;i++)
 	{
 	  GDate *date;
 	  date = g_date_new();
 	  g_date_set_time_t(date,times);
-	  g_date_add_days(date,i);	
+	  g_date_add_days(date,i);
 	  gchar *text = load_nm(date,nmday);
 	  if(text) {
+
 			strcat(mar_text, text);
 			strcat(mar_text, "\n");
-			g_free(text);	
+			g_free(text);
+
 		}
-	}	  
+	}
 	markup_text = g_markup_escape_text(mar_text,-1);
-	  
+
     gtk_tooltip_set_markup (tooltip, markup_text);
     g_free(markup_text);
 
@@ -634,22 +637,24 @@ static gboolean on_tooltip_cb (GtkWidget        *widget,
   return TRUE;
 }
 
-static gchar * getEaster(int rok)
+static gchar * getEaster(int year)
 {
-	int A,B,C,D,E,F,G,H,I,K,L,M,P,Q;
-	if ((rok<50) && (rok>=0)) {
-		rok = rok + 2000;
+	int A,B,C,D,E,F,G,H,I,K,L,M;
+	int day;int month;
+
+	if ((year<50) && (year>=0)) {
+		year = year + 2000;
 	} else
-	if ((rok>=50) && (rok<100)) {
-		rok = rok + 1900;
+	if ((year>=50) && (year<100)) {
+		year = year + 1900;
 	}
-	if ((rok<1583) || (rok>2498)) {
-    return g_strdup_printf (_("Wrong set year: %d \n Program can work with years  betwen 1583 and 2498.\n Years between 1950 and 2049 can set by last two numbers."),rok);
+	if ((year<1583) || (year>2498)) {
+    return g_strdup_printf (_("Wrong set year: %d \n Program can work with years  betwen 1583 and 2498.\n Years between 1950 and 2049 can set by last two numbers."),year);
 }
 
-  A = rok%19;
-  B = rok/100;
-  C = rok%100;
+  A = year%19;
+  B = year/100;
+  C = year%100;
   D = B/4;
   E = B%4;
   F = (B+8)/25;
@@ -659,9 +664,9 @@ static gchar * getEaster(int rok)
   K = C%4;
   L = (32+(2*E)+(2*I)-H-K)%7;
   M = (A+(11*H)+(22*L))/451;
-  P = (H+L-(7*M)+114)/31;
-  Q = ( (H+L-(7*M)+114)%31)+1;
-  return g_strdup_printf(_("Easter sunday in %d is %d. %d "), rok, Q, P);
+  day = (H+L-(7*M)+114)/31;
+  month = ( (H+L-(7*M)+114)%31)+1;
+  return g_strdup_printf(_("Easter sunday in %d is %d. %d "), year, day, month);
 }
 
 static gchar * getNamedayDay(gchar *_name, NamedaysPlugin *nmday)
@@ -669,5 +674,6 @@ static gchar * getNamedayDay(gchar *_name, NamedaysPlugin *nmday)
 	gchar *date = findNamedaysInFile(nmday->setting1,_name);
 	if(date) {
 		return g_strdup_printf(_("Namedays for name %s is at %s"), _name, date);
-	} return NULL;	
+	}
+	return NULL;
 }

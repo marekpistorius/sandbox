@@ -1,6 +1,6 @@
 /*  $Id$
  *
- *  Copyright (c) 2010-2017
+ *  Copyright (c) 2017
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -61,7 +61,7 @@ void initDialogWithCalandar(XfcePanelPlugin *plugin, NamedaysPlugin *nm)
 	nmd_cal = g_slice_new0(nameday_calendar);
 	nmd_cal->plugin = nm;
 	nmd_cal->main_widget = gtk_vbox_new(FALSE,0);
-	
+
 	dlg = gtk_dialog_new_with_buttons(_("Nameday Plugin Calendar"),
                                                 GTK_WINDOW (gtk_widget_get_toplevel (GTK_WIDGET (plugin))),
                                                 GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_NO_SEPARATOR,
