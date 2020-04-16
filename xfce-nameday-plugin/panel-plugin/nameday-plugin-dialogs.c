@@ -25,14 +25,14 @@
 #include <gtk/gtk.h>
 
 #include <libxfce4ui/libxfce4ui.h>
-#include <libxfce4panel/xfce-panel-plugin.h>
+#include <libxfce4panel/libxfce4panel.h>
 
 #include "nameday-plugin.h"
 #include "nameday-plugin-data.h"
 #include "nameday-plugin-dialogs.h"
 
 /* the website url */
-#define PLUGIN_WEBSITE "https://launchpad.net/xfce4-nameday-plugin"
+#define PLUGIN_WEBSITE "http://m-opensource.eu"
 #define BORDER           8
 
 typedef void (*cb_function) (NamedaysPlugin *);
@@ -190,7 +190,7 @@ void nameday_configure(XfcePanelPlugin *plugin,
 void nameday_about (XfcePanelPlugin *plugin)
 {
    	gtk_show_about_dialog(NULL, "copyright", _("Namedays applet for Xfce"),
-								"license", "GPLv2,Marek <marek.pistorius at gmail dot com>,2016",
+								"license", "GPLv2,,2020",
 								"program-name", _("Namedays Plugin"),
 								"version", VERSION,
 								"website", PLUGIN_WEBSITE,

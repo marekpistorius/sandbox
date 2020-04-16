@@ -26,7 +26,7 @@
 
 #include <gtk/gtk.h>
 #include <libxfce4util/libxfce4util.h>
-#include <libxfce4panel/xfce-panel-plugin.h>
+#include <libxfce4panel/libxfce4panel.h>
 
 #include "nameday-plugin.h"
 #include "nameday-plugin-data.h"
@@ -309,16 +309,10 @@ nameday_construct (XfcePanelPlugin *plugin)
   GtkWidget *calnItem;
 
   /* setup transation domain */
-  xfce_textdomain(GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR, "UTF-8");
+  //xfce_textdomain(GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR, "UTF-8");
 
   /* create the plugin */
   nmday = nameday_new (plugin);
-
-  #if !GTK_CHECK_VERSION(2,12,0)
-	nmday->tooltips = gtk_tooltips_new ();
-	g_object_ref (nmday->tooltips);
-	gtk_object_sink (GTK_OBJECT (nmday->tooltips));
-  #endif
 
   /* add the ebox to the panel */
   gtk_container_add (GTK_CONTAINER (plugin), nmday->ebox);
@@ -345,13 +339,6 @@ nameday_construct (XfcePanelPlugin *plugin)
   xfce_panel_plugin_menu_insert_item(plugin, GTK_MENU_ITEM(calnItem));
   g_signal_connect(calnItem, "activate", G_CALLBACK(onCalendar), nmday);
   gtk_widget_show(calnItem);
-
-  #if GTK_CHECK_VERSION(2,12,0)
-  g_object_set (G_OBJECT(nmday->ebox), "has-tooltip", TRUE, NULL);
-  g_signal_connect(G_OBJECT(nmday->ebox), "query-tooltip",
-		   G_CALLBACK(on_tooltip_cb),
-		  nmday);
-  #endif
 
   /* connect plugin signals */
   g_signal_connect (G_OBJECT (plugin), "free-data",
