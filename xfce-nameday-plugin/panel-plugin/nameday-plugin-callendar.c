@@ -1,6 +1,6 @@
 /*  $Id$
  *
- *  Copyright (c) 2017
+ *  Copyright (c) mmaniu
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
 #include <gtk/gtk.h>
 
 #include <libxfce4ui/libxfce4ui.h>
-#include <libxfce4panel/xfce-panel-plugin.h>
+#include <libxfce4panel/libxfce4panel.h>
 
 #include "nameday-plugin.h"
 #include "nameday-plugin-dialogs.h"
@@ -33,15 +33,8 @@
 
 static gchar* onDetailFuncs(GtkCalendar *calendar, guint year, guint month, guint day, gpointer data)
 {
-	g_print("%d %d %d", year, month, day);
-	gchar *tmp = NULL,*tmp2 = NULL;
-	GDate *date = NULL;
-	date = g_date_new_dmy(day, month+1, year);//@Here need be +1 because GtKCalender give us month from 0
-	tmp = g_strdup(load_nm(date,(NamedaysPlugin *)data));
-	tmp2 = g_strdup_printf(_("Nameday have %s "),tmp);
-	g_free(tmp);
-	g_date_free(date);
-	return (tmp2);
+	GDate* date = g_date_new_dmy(day, month, year);
+	return g_strdup_printf(_("Nameday have %s "),load_nm(date,(NamedaysPlugin *)data));
 }
 
 static void onDaySelected(GtkCalendar *calendar, gpointer data)

@@ -1,6 +1,6 @@
 /*  $Id$
  *
- *  Copyright (c) 2017
+ *  Copyright (c) mmaniu
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
 #include <glib.h>
 #include <glib/gstdio.h>
 #include <libxfce4util/libxfce4util.h>
-#include <libxfce4panel/xfce-panel-plugin.h>
+#include <libxfce4panel/libxfce4panel.h>
 #include <libxfce4panel/xfce-hvbox.h>
 #include <sys/types.h>
 #include <sys/stat.h>
