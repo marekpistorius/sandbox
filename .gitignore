@@ -31,3 +31,14 @@
 # Debug files
 *.dSYM/
 sh.sh
+*.pdb
+*.idb
+*.tlog
+*.log
+*.recipe
+*.ilk
+*.txt
+*.ipch
+*.db
+Devs/.vs/Devs/v17/.suo
+*.user
